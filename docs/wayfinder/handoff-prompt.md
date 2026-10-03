@@ -18,7 +18,8 @@
 
 - **CodeBuddy skills**（user 级，`~/.codebuddy/skills/`）：`swiftdata`、`swift-concurrency`、`ios-networking`、`background-processing`、`swift-security`、`swift-architecture`、`swift-api-design-guidelines`、`swift-testing`、`swiftui-patterns` / `swiftui-navigation` / `swiftui-layout-components` / `swiftui-performance` / `swiftui-animation` / `swiftui-gestures` / `swiftui-ui-patterns`、`ios-accessibility`、`ios-localization`、`ios-simulator`、`debugging-instruments`、`ios-debugger-agent`
 - **插件**：`swift-lsp`（SourceKit-LSP，给 `.swift` 提供代码智能）
-- **MCP**：`xcodebuildmcp`（build / run / debug iOS app；具体工具调用需要**完整 Xcode**）
+- **MCP**：`xcodebuildmcp`（build / run / debug iOS app，已验证可用，72 个工具）
+- **Xcode**：26.6 已装并选中（见第 5 节）。`xcodes` / `aria2` 也已装好，可命令行装/换 Xcode 版本。
 - **缺口**：**没有 AVFoundation / 音频录制类 skill**——项目最核心的锁屏长录音能力没有现成 skill 托底，只能靠官方文档
 
 ## 1. 目的地
@@ -70,7 +71,9 @@
 - **ASR**：DashScope `paraformer-realtime-v2` WebSocket ¥0.86/h，支持热词表；FunASR 官方 2pass
 - **iOS**：只有 `UIBackgroundModes: audio` 能锁屏录音；Safari/PWA 无后台能力；后台 `URLSession` + VPN 未文档化（上传应在 app 进程内做）；免费账号能否带 audio 后台模式**未证实**
 - **本机 RAG**：`codebase-memory-mcp`（MCP stdio，`node_vectors` 为空）与 Obsidian vault Lewis（REST :27124，未运行）；**没有本地 embedding 模型**
-- **本机 Apple 开发环境**：只装了 **Command Line Tools**（`xcode-select -p` = `/Library/Developer/CommandLineTools`），**没有完整 Xcode**——`xcodebuild` 直接报错 `requires Xcode`。Swift 6.3 与 `sourcekit-lsp` 可用。**为真机编译 / 免费签名 / 跑模拟器，必须先装完整 Xcode（App Store，体积大）。这是 #2 的硬前置，`xcodebuildmcp` 的工具在装 Xcode 前调用会失败。**
+- **本机 Apple 开发环境**：**Xcode 26.6（17F113）已装** 于 `/Applications/Xcode-26.6.0.app`，已 `xcode-select` 选中；iOS 26.5 SDK + 模拟器 SDK 就位；Swift 6.3.3；`clang` 可用；许可与首次启动组件已过。选 26.6 而非 27.0 的原因（Apple 官方 SDK 要求表）：**Xcode 27 要求 macOS 26.6+，本机 macOS 26.2 不满足；Xcode 26.6 要求 26.2+**。
+- **仍缺**：**iOS 模拟器 runtime 未下载**（`xcrun simctl runtime list` 为空 → `simctl list devices` 里 0 个模拟器）。需要时 `xcodebuild -downloadPlatform iOS`（约 7–8 GB）。真机（#2 spike）不受此影响，模拟器只是开发便利。
+- 工具：`xcodes`（`~/.local/bin/xcodes`）、`aria2`（`/opt/homebrew/bin`，下载加速）、`xcodebuildmcp` MCP（**已验证可用，72 个工具**）、`swift-lsp` 插件。
 
 ## 6. 完成标准
 
