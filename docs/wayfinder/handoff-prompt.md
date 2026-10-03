@@ -14,6 +14,13 @@
 8. `docs/research/stack-survey.md` — 每个模块的开源选型调研（可以抄什么、明确不用什么、哪两处没有开源先例）
 9. 本文件第 4、5 节 — 本轮 grilling 的结论与已查实事实，**不要再重新讨论**
 
+## 0b. 本机已装好的 iOS 工具（直接用，别重装）
+
+- **CodeBuddy skills**（user 级，`~/.codebuddy/skills/`）：`swiftdata`、`swift-concurrency`、`ios-networking`、`background-processing`、`swift-security`、`swift-architecture`、`swift-api-design-guidelines`、`swift-testing`、`swiftui-patterns` / `swiftui-navigation` / `swiftui-layout-components` / `swiftui-performance` / `swiftui-animation` / `swiftui-gestures` / `swiftui-ui-patterns`、`ios-accessibility`、`ios-localization`、`ios-simulator`、`debugging-instruments`、`ios-debugger-agent`
+- **插件**：`swift-lsp`（SourceKit-LSP，给 `.swift` 提供代码智能）
+- **MCP**：`xcodebuildmcp`（build / run / debug iOS app；具体工具调用需要**完整 Xcode**）
+- **缺口**：**没有 AVFoundation / 音频录制类 skill**——项目最核心的锁屏长录音能力没有现成 skill 托底，只能靠官方文档
+
 ## 1. 目的地
 
 一份**可执行的 MVP 实现 spec**：实现 agent 拿到就能动手——目录结构、SQLite schema、事件 seam、前端模块划分、六个 Provider 契约。且「iPhone 能否免费签名 + 锁屏录音 40 分钟 + Tailscale 回传」这个最大风险已被 spike 证实或排除。
@@ -63,6 +70,7 @@
 - **ASR**：DashScope `paraformer-realtime-v2` WebSocket ¥0.86/h，支持热词表；FunASR 官方 2pass
 - **iOS**：只有 `UIBackgroundModes: audio` 能锁屏录音；Safari/PWA 无后台能力；后台 `URLSession` + VPN 未文档化（上传应在 app 进程内做）；免费账号能否带 audio 后台模式**未证实**
 - **本机 RAG**：`codebase-memory-mcp`（MCP stdio，`node_vectors` 为空）与 Obsidian vault Lewis（REST :27124，未运行）；**没有本地 embedding 模型**
+- **本机 Apple 开发环境**：只装了 **Command Line Tools**（`xcode-select -p` = `/Library/Developer/CommandLineTools`），**没有完整 Xcode**——`xcodebuild` 直接报错 `requires Xcode`。Swift 6.3 与 `sourcekit-lsp` 可用。**为真机编译 / 免费签名 / 跑模拟器，必须先装完整 Xcode（App Store，体积大）。这是 #2 的硬前置，`xcodebuildmcp` 的工具在装 Xcode 前调用会失败。**
 
 ## 6. 完成标准
 
