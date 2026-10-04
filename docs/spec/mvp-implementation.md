@@ -596,7 +596,7 @@ interface ExecutorProvider {
 
 - **Xcode 26.6（17F113）**：`/Applications/Xcode-26.6.0.app`，已 `xcode-select` 选中；iOS 26.5 SDK + 模拟器 SDK；Swift 6.3.3。
   - 为什么不是 27.0：**Xcode 27 要求 macOS 26.6+，本机 macOS 26.2 不满足**（Apple 官方 SDK 要求表）。
-- **iOS 模拟器 runtime**：iOS 26.5 Simulator（23F77，8.52 GB）已下载安装（见交付时状态）。
+- **iOS 模拟器 runtime 已装**：**iOS 26.5（23F77，7.9 GB，Ready）**；iPhone 17 Pro / 17 Pro Max / 17 / 17e / Air 等设备可用，`simctl boot` 实测通过。装法 `xcodebuild -downloadPlatform iOS`，**不需要 sudo**。
 - 项目级工具：`.mcp.json`（xcodebuildmcp，`defer_loading`）+ `.codebuddy/settings.json`（swift-lsp）。
 - 20 个 iOS/Swift skill（user 级）。
 - 其他：`xcodes`（`~/.local/bin`）、`aria2`（下载加速）、Homebrew、Node、`gh`。

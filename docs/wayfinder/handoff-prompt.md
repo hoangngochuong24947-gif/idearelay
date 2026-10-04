@@ -73,7 +73,7 @@
 - **iOS**：只有 `UIBackgroundModes: audio` 能锁屏录音；Safari/PWA 无后台能力；后台 `URLSession` + VPN 未文档化（上传应在 app 进程内做）；免费账号能否带 audio 后台模式**未证实**
 - **本机 RAG**：`codebase-memory-mcp`（MCP stdio，`node_vectors` 为空）与 Obsidian vault Lewis（REST :27124，未运行）；**没有本地 embedding 模型**
 - **本机 Apple 开发环境**：**Xcode 26.6（17F113）已装** 于 `/Applications/Xcode-26.6.0.app`，已 `xcode-select` 选中；iOS 26.5 SDK + 模拟器 SDK 就位；Swift 6.3.3；`clang` 可用；许可与首次启动组件已过。选 26.6 而非 27.0 的原因（Apple 官方 SDK 要求表）：**Xcode 27 要求 macOS 26.6+，本机 macOS 26.2 不满足；Xcode 26.6 要求 26.2+**。
-- **仍缺**：**iOS 模拟器 runtime 未下载**（`xcrun simctl runtime list` 为空 → `simctl list devices` 里 0 个模拟器）。需要时 `xcodebuild -downloadPlatform iOS`（约 7–8 GB）。真机（#2 spike）不受此影响，模拟器只是开发便利。
+- **iOS 模拟器 runtime 已装**：**iOS 26.5（23F77 / 7.9 GB，Ready）**，设备含 iPhone 17 Pro / 17 Pro Max / 17 / 17e / Air 等，`xcrun simctl boot <UDID>` 可直接启动（已实测 boot 成功）。装法：`xcodebuild -downloadPlatform iOS`（**不需要 sudo**）。
 - 工具：`xcodes`（`~/.local/bin/xcodes`）、`aria2`（`/opt/homebrew/bin`，下载加速）、`xcodebuildmcp` MCP（**已验证可用，72 个工具**）、`swift-lsp` 插件。
 
 ## 6. 完成标准
