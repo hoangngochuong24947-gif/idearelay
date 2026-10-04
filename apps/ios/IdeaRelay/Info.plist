@@ -21,6 +21,16 @@
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 
+	<!-- Dev-only ATS exception: the Hub is plain HTTP on localhost during
+	     development (simulator). Production goes over Tailscale HTTPS
+	     (https://<machine>.<tailnet>.ts.net, spec §12.1 Networking) and needs
+	     no exception; remove this block before shipping. -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

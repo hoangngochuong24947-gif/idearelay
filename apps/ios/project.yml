@@ -10,6 +10,13 @@ options:
   createIntermediateGroups: true
   groupSortPosition: top
 
+packages:
+  # tus 1.0.0 client for the Hub's /upload endpoint (spec §12.1 Uploader).
+  # Pinned exact; bump deliberately.
+  TUSKit:
+    url: https://github.com/tus/TUSKit.git
+    exactVersion: 3.7.0
+
 settings:
   base:
     SWIFT_VERSION: "6.0"
@@ -40,6 +47,8 @@ targets:
         # Leave DEVELOPMENT_TEAM empty in the checked-in spec; the owner selects
         # their Personal Team once in Xcode -> Signing & Capabilities.
         DEVELOPMENT_TEAM: ""
+    dependencies:
+      - package: TUSKit
 
 schemes:
   IdeaRelay:

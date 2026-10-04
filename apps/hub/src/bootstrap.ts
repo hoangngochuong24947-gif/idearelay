@@ -168,8 +168,15 @@ export async function bootstrap(
     log,
   });
 
-  // 5. HTTP.
-  const http = await startHttp({ ...config.http, log });
+  // 5. HTTP, including the mobile-facing tus upload endpoint (spec §11).
+  const http = await startHttp({
+    ...config.http,
+    tus: {
+      tusDir: config.tusDir,
+      inboxDir: config.inboxDir,
+    },
+    log,
+  });
 
   log('ready');
 

@@ -49,6 +49,12 @@ export interface HubConfig {
   dataDir: string;
   dbPath: string;
   inboxDir: string;
+  /**
+   * tus data-store directory (spec §11 `POST /upload`). Lives under the data
+   * dir but NEVER inside the consume folder — partial uploads must not be
+   * seen by the watcher.
+   */
+  tusDir: string;
   http: { host: string; port: number };
   worker: {
     workerId: string;
@@ -132,11 +138,13 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): HubConfig {
     env.IDEA_RELAY_DB_PATH ?? resolve(dataDir, 'idea-relay.db'),
   );
   const inboxDir = resolve(env.IDEA_RELAY_INBOX_DIR ?? resolve(dataDir, 'inbox'));
+  const tusDir = resolve(env.IDEA_RELAY_TUS_DIR ?? resolve(dataDir, 'tus-uploads'));
 
   return {
     dataDir,
     dbPath,
     inboxDir,
+    tusDir,
     http: {
       host: env.IDEA_RELAY_HTTP_HOST ?? '127.0.0.1',
       port: intFromEnv(env.IDEA_RELAY_HTTP_PORT, 8787),

@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@idearelay/contracts": "workspace:*",
+    "@tus/file-store": "2.1.1",
+    "@tus/server": "2.4.5",
     "better-sqlite3": "13.0.3",
     "chokidar": "5.0.0",
     "drizzle-orm": "0.45.3"

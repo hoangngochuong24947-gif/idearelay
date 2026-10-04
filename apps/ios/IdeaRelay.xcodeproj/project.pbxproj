@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		21C3A1B209D236C555F62C19 /* TUSKit in Frameworks */ = {isa = PBXBuildFile; productRef = FE0B404611F569DC474BC5CA /* TUSKit */; };
 		7661A52512CB0C1C15354C90 /* RecorderController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A924A574AAE1B4FA0DF60B4 /* RecorderController.swift */; };
+		8B8EDA40FAAC999E5B4277F3 /* HubSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BDD717CA492EAB70A8314C /* HubSettings.swift */; };
 		D0BAF97ED1221056E3B811B3 /* RecordingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAC6AEB7DF8A72C8239A2E1 /* RecordingSession.swift */; };
+		DDA2813C7F333D3B6DDCA8A2 /* UploadCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B9A073FD277B3467457BC2 /* UploadCoordinator.swift */; };
 		F0ECB7ACC99E1EECF5583E6F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F644E48ED6EE40AEBF89BBA /* ContentView.swift */; };
 		F0F956001813CD79E9960F56 /* IdeaRelayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041F22DD8C122B9FD61F95EF /* IdeaRelayApp.swift */; };
 /* End PBXBuildFile section */
@@ -16,10 +19,23 @@
 /* Begin PBXFileReference section */
 		041F22DD8C122B9FD61F95EF /* IdeaRelayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdeaRelayApp.swift; sourceTree = "<group>"; };
 		3AAC6AEB7DF8A72C8239A2E1 /* RecordingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingSession.swift; sourceTree = "<group>"; };
+		51B9A073FD277B3467457BC2 /* UploadCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadCoordinator.swift; sourceTree = "<group>"; };
 		7F644E48ED6EE40AEBF89BBA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8A924A574AAE1B4FA0DF60B4 /* RecorderController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderController.swift; sourceTree = "<group>"; };
 		A25B8B3B746066F6631FC939 /* IdeaRelay.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = IdeaRelay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4BDD717CA492EAB70A8314C /* HubSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubSettings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8A1B50C33BCEFE0574CC8BFD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				21C3A1B209D236C555F62C19 /* TUSKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		42591EC97229E7CA5DF3E020 /* Products */ = {
@@ -28,6 +44,14 @@
 				A25B8B3B746066F6631FC939 /* IdeaRelay.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		55DC6F9A3750FDE0A9B59CA9 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				D4BDD717CA492EAB70A8314C /* HubSettings.swift */,
+			);
+			path = Networking;
 			sourceTree = "<group>";
 		};
 		6143D985CC4D62C45B94FDBC = {
@@ -58,8 +82,10 @@
 			isa = PBXGroup;
 			children = (
 				6BC19078FF1CB55B5BCCF321 /* App */,
+				55DC6F9A3750FDE0A9B59CA9 /* Networking */,
 				B359BFAD21E12034B9A175A2 /* Recorder */,
 				6D5E1C861D890C55A92071A5 /* Store */,
+				D7359CFDB4BF0F7550B0778E /* Uploader */,
 				E653DA4C7A65B36063089935 /* Views */,
 			);
 			path = IdeaRelay;
@@ -71,6 +97,14 @@
 				8A924A574AAE1B4FA0DF60B4 /* RecorderController.swift */,
 			);
 			path = Recorder;
+			sourceTree = "<group>";
+		};
+		D7359CFDB4BF0F7550B0778E /* Uploader */ = {
+			isa = PBXGroup;
+			children = (
+				51B9A073FD277B3467457BC2 /* UploadCoordinator.swift */,
+			);
+			path = Uploader;
 			sourceTree = "<group>";
 		};
 		E653DA4C7A65B36063089935 /* Views */ = {
@@ -89,6 +123,7 @@
 			buildConfigurationList = E1355DC728D4026538ACB44A /* Build configuration list for PBXNativeTarget "IdeaRelay" */;
 			buildPhases = (
 				09BBA0F0C2175F56868CC37D /* Sources */,
+				8A1B50C33BCEFE0574CC8BFD /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -96,6 +131,7 @@
 			);
 			name = IdeaRelay;
 			packageProductDependencies = (
+				FE0B404611F569DC474BC5CA /* TUSKit */,
 			);
 			productName = IdeaRelay;
 			productReference = A25B8B3B746066F6631FC939 /* IdeaRelay.app */;
@@ -125,6 +161,9 @@
 			);
 			mainGroup = 6143D985CC4D62C45B94FDBC;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2A478F8B190D5D5A97A6022C /* XCRemoteSwiftPackageReference "TUSKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 42591EC97229E7CA5DF3E020 /* Products */;
 			projectDirPath = "";
@@ -141,9 +180,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0ECB7ACC99E1EECF5583E6F /* ContentView.swift in Sources */,
+				8B8EDA40FAAC999E5B4277F3 /* HubSettings.swift in Sources */,
 				F0F956001813CD79E9960F56 /* IdeaRelayApp.swift in Sources */,
 				7661A52512CB0C1C15354C90 /* RecorderController.swift in Sources */,
 				D0BAF97ED1221056E3B811B3 /* RecordingSession.swift in Sources */,
+				DDA2813C7F333D3B6DDCA8A2 /* UploadCoordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,6 +384,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2A478F8B190D5D5A97A6022C /* XCRemoteSwiftPackageReference "TUSKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tus/TUSKit.git";
+			requirement = {
+				kind = exactVersion;
+				version = 3.7.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FE0B404611F569DC474BC5CA /* TUSKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2A478F8B190D5D5A97A6022C /* XCRemoteSwiftPackageReference "TUSKit" */;
+			productName = TUSKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B7FCACC75A4F9CAACF19EFAF /* Project object */;
 }

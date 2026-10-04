@@ -150,13 +150,24 @@ final class RecorderController {
     }
 
     private func beginRecorder(at url: URL) throws {
-        let settings: [String: Any] = [
-            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVSampleRateKey: 44_100,
-            AVNumberOfChannelsKey: 1,
-            AVEncoderBitRateKey: 64_000,
-            AVEncoderAudioQualityKey: AVAudioQuality.medium.rawValue,
-        ]
+        let settings: [String: Any] = {
+            var settings: [String: Any] = [
+                AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+                AVSampleRateKey: 44_100,
+                AVNumberOfChannelsKey: 1,
+                AVEncoderAudioQualityKey: AVAudioQuality.medium.rawValue,
+            ]
+            #if targetEnvironment(simulator)
+            // Simulator-only: setting AVEncoderBitRateKey hangs in
+            // AudioQueueSetProperty (setBitRate) against the sim host's audio
+            // HAL (observed on iOS 26.5 sim, process sample shows a blocked
+            // mach_msg to the audio server). Device builds keep the explicit
+            // 64 kbps target.
+            #else
+            settings[AVEncoderBitRateKey] = 64_000
+            #endif
+            return settings
+        }()
         let recorder = try AVAudioRecorder(url: url, settings: settings)
         recorder.prepareToRecord()
         guard recorder.record() else { throw RecorderError.couldNotStart }
