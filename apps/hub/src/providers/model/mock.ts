@@ -52,6 +52,14 @@ export function createMockModelProvider(
           usage: null,
         };
       }
+      const system = req.messages.find((m) => m.role === 'system')?.content ?? '';
+      if (system.includes(TRANSLATOR_MARKER)) {
+        return {
+          text: renderMockTranslation(input),
+          model: req.model !== '' ? req.model : model,
+          usage: null,
+        };
+      }
       return {
         text: renderMockSummary(input),
         model: req.model !== '' ? req.model : model,
@@ -69,6 +77,29 @@ export function renderMockSummary(input: string): string {
   const head = text.slice(0, 120).replace(/\s+/g, ' ');
   const ellipsis = chars > 120 ? '…' : '';
   return `Mock summary: ${chars} chars across ${lines} lines. Key content: ${head}${ellipsis}`;
+}
+
+/**
+ * Substring of the bilingual pipeline's system prompt that switches the mock
+ * into translator mode (spec §15). The real path is the OpenAI-compatible
+ * provider; the mock only guarantees a deterministic offline rendering.
+ */
+const TRANSLATOR_MARKER = '翻译器';
+
+/**
+ * Deterministic pseudo-translation: every `序号| 原文` line is echoed back as
+ * `序号| [en] 原文` with order and numbering preserved. Non-numbered lines
+ * (the system prompt) are ignored.
+ */
+export function renderMockTranslation(input: string): string {
+  const out: string[] = [];
+  for (const line of input.split('\n')) {
+    const match = /^(\d+)\|\s?(.*)$/.exec(line.trim());
+    if (match !== null) {
+      out.push(`${match[1]}| [en] ${match[2]}`);
+    }
+  }
+  return out.join('\n');
 }
 
 function mockSplitFromFixture(

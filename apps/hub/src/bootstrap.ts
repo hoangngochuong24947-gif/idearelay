@@ -15,13 +15,16 @@ import { asrRegistration, createAsrProvider } from './providers/asr/index.js';
 import { createDecisionProvider, decisionRegistration } from './providers/decision/index.js';
 import { createModelProvider, modelRegistration, MOCK_MODEL_ID } from './providers/model/index.js';
 import { createRagProvider, ragProviderRegistration } from './providers/rag/index.js';
+import { LocalDirSyncProvider, syncProviderRegistration } from './providers/sync/index.js';
 import { JobQueue } from './queue/job-queue.js';
 import { createIntake } from './watcher/intake.js';
 import { startWatcher, type WatcherHandle } from './watcher/watcher.js';
+import { registerBilingualHandler } from './worker/handlers/bilingual.js';
 import { registerEchoHandler } from './worker/handlers/echo.js';
 import { registerEnrichHandler } from './worker/handlers/enrich.js';
 import { registerRealignHandler } from './worker/handlers/realign.js';
 import { registerSplitHandler } from './worker/handlers/split.js';
+import { registerSyncHandler } from './worker/handlers/sync.js';
 import { registerTranscribeHandler } from './worker/handlers/transcribe.js';
 import { registerWorkflowRunHandler } from './worker/handlers/workflow-run.js';
 import { Worker } from './worker/worker.js';
@@ -44,6 +47,9 @@ export interface BootstrapOptions {
 }
 
 const defaultLog = (message: string): void => console.log(`[hub] ${message}`);
+
+/** How often the one-way mirror re-pushes projections (§7.5). */
+const SYNC_ENQUEUE_INTERVAL_MS = 60_000;
 
 /**
  * Bring the Hub up in the order fixed by spec §11:
@@ -109,11 +115,20 @@ export async function bootstrap(
     enabled: true,
   };
 
+  // SyncProvider (§7.5, M7): one-way local-dir mirror, disabled when the target
+  // env is unset. The target is a mirror only, never a source (ADR-0002).
+  const syncProvider = new LocalDirSyncProvider({ dataDir: config.dataDir, log });
+  const syncRegistration = syncProviderRegistration(
+    syncProvider,
+    config.sync.targetDir !== null,
+  );
+
   const registrations: ProviderRegistration[] = [
     asrRegistration(asr, asrCredential),
     modelRegistration(model, modelCredential),
     decisionRegistration(decision, decisionCredential),
     executorRegistration,
+    syncRegistration,
     ...config.providers,
   ];
   const registry = registerProviders(registrations);
@@ -185,6 +200,20 @@ export async function bootstrap(
     dataDir: config.dataDir,
     log,
   });
+  registerBilingualHandler(worker, {
+    sqlite: db.sqlite,
+    dataDir: config.dataDir,
+    model,
+    modelName: config.model.model ?? MOCK_MODEL_ID,
+    log,
+  });
+  registerSyncHandler(worker, {
+    sqlite: db.sqlite,
+    dataDir: config.dataDir,
+    sync: syncProvider,
+    targetDir: config.sync.targetDir,
+    log,
+  });
 
   // 3b. WorkflowRun engine (M5, spec §8): gate scan → run jobs → Pi stages.
   const runner = new WorkflowRunner(
@@ -216,7 +245,15 @@ export async function bootstrap(
   );
 
   worker.start();
-  log('worker: loop started (handlers: echo, transcribe, enrich, split, realign)');
+  log('worker: loop started (handlers: echo, transcribe, enrich, split, realign, bilingual, sync)');
+
+  // One-way mirror (§7.5): enqueue a `sync` job at startup and periodically;
+  // each run skips unchanged files, so this is cheap and idempotent.
+  queue.enqueue({ kind: 'sync' });
+  const syncTimer = setInterval(() => {
+    queue.enqueue({ kind: 'sync' });
+  }, SYNC_ENQUEUE_INTERVAL_MS);
+  syncTimer.unref();
 
   // 4. Consume-folder watcher → intake.
   const intake = createIntake({
@@ -258,6 +295,7 @@ export async function bootstrap(
     runner,
     async stop(): Promise<void> {
       clearInterval(triggerTimer);
+      clearInterval(syncTimer);
       await worker.stop();
       await watcher.stop();
       await http.close();

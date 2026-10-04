@@ -76,6 +76,11 @@ export interface HubConfig {
     /** §6: a `running` run with no heartbeat for this long is considered dead. */
     staleRunMs: number;
   };
+  /**
+   * One-way mirror target (§7.5, M7). Null (env unset) disables the `sync` job.
+   * The target is a mirror only — never a source of truth.
+   */
+  sync: { targetDir: string | null };
   providers: ProviderRegistration[];
 }
 
@@ -208,6 +213,13 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): HubConfig {
       triggerIntervalMs: intFromEnv(env.IDEA_RELAY_RUN_TRIGGER_INTERVAL_MS, 2_000),
       heartbeatMs: intFromEnv(env.IDEA_RELAY_RUN_HEARTBEAT_MS, 5_000),
       staleRunMs: intFromEnv(env.IDEA_RELAY_RUN_STALE_MS, 120_000),
+    },
+    sync: {
+      targetDir:
+        env.IDEA_RELAY_SYNC_TARGET_DIR !== undefined &&
+        env.IDEA_RELAY_SYNC_TARGET_DIR.trim() !== ''
+          ? resolve(env.IDEA_RELAY_SYNC_TARGET_DIR)
+          : null,
     },
     providers: [],
   };

@@ -61,6 +61,14 @@ export const EVENT_TYPES = {
   RunFinished: 'run.finished',
   RunFailed: 'run.failed',
   RunRolledBack: 'run.rolled_back',
+  // M7 (同步与收尾): inbox human actions + correction annotations (spec §9 / §11).
+  InboxItemAccepted: 'item.accepted',
+  InboxItemRejected: 'item.rejected',
+  InboxItemRerouted: 'item.rerouted',
+  AnnotationRecorded: 'annotation.recorded',
+  // M7: bilingual transcript projection (spec §15) + one-way sync mirror (§7.5).
+  BilingualCompleted: 'bilingual.completed',
+  SyncCompleted: 'sync.completed',
 } as const;
 
 export type KnownEventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];

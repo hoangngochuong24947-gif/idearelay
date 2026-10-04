@@ -1,4 +1,5 @@
 import type { Worker } from '../worker.js';
+import { bilingualIdempotencyKey } from '../../pipeline/bilingual.js';
 import { enrichRecording, type EnrichDeps } from '../../pipeline/enrich.js';
 
 /** Payload of an `enrich` job enqueued at the end of the transcribe handler. */
@@ -15,6 +16,9 @@ export function enrichIdempotencyKey(recordingId: string, revisionId: string): s
 /**
  * Register the `enrich` worker handler (spec §13 step 6). Runs the M2 pipeline
  * purely against the injected `ModelProvider` / `DecisionProvider` interfaces.
+ * When a queue is present, a completed enrich also enqueues the idempotent
+ * `bilingual` job (spec §15: 转写层直接出双语 — the projection is written after
+ * the Final transcript and its enrichment).
  */
 export function registerEnrichHandler(worker: Worker, deps: EnrichDeps): void {
   worker.register('enrich', async (job) => {
@@ -22,10 +26,18 @@ export function registerEnrichHandler(worker: Worker, deps: EnrichDeps): void {
     if (typeof payload.recordingId !== 'string' || payload.recordingId === '') {
       throw new Error('enrich job payload missing recordingId');
     }
-    return enrichRecording(
+    const outcome = await enrichRecording(
       deps,
       payload.recordingId,
       typeof payload.revisionId === 'string' ? payload.revisionId : undefined,
     );
+    if (deps.queue !== undefined) {
+      deps.queue.enqueue({
+        kind: 'bilingual',
+        payload: { recordingId: outcome.recordingId, revisionId: outcome.revisionId },
+        idempotencyKey: bilingualIdempotencyKey(outcome.recordingId, outcome.revisionId),
+      });
+    }
+    return outcome;
   });
 }
