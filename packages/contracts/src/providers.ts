@@ -166,6 +166,23 @@ export interface DecisionProvider {
   decide(req: DecisionRequest): Promise<DecisionResult>;
 }
 
+/**
+ * Default DecisionProvider thresholds. Jev's defaults are **officially
+ * uncalibrated on any user data** (ADR-0005), so every call may override them via
+ * `DecisionRequest.thresholdOverrides`.
+ */
+export interface DecisionThresholds {
+  high: number;
+  low: number;
+  noulBand: [number, number];
+}
+
+export const DEFAULT_DECISION_THRESHOLDS: DecisionThresholds = {
+  high: 0.8,
+  low: 0.5,
+  noulBand: [0.35, 0.65],
+};
+
 // ---------------------------------------------------------------------------
 // §7.4 StorageProvider
 // ---------------------------------------------------------------------------

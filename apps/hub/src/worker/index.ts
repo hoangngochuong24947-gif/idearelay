@@ -4,4 +4,10 @@ export { registerEchoHandler } from './handlers/echo.js';
 export {
   registerTranscribeHandler,
   type TranscribeJobPayload,
+  type TranscribeHandlerDeps,
 } from './handlers/transcribe.js';
+export {
+  registerEnrichHandler,
+  enrichIdempotencyKey,
+  type EnrichJobPayload,
+} from './handlers/enrich.js';

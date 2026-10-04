@@ -46,6 +46,11 @@ export const EVENT_TYPES = {
   TranscriptRevisionCreated: 'transcript.revision.created',
   ProjectionWritten: 'projection.written',
   FileManuallyEdited: 'file.manually_edited',
+  // M2 (总结与分类): enrich stage + gate + audit (spec §9 / §5.3).
+  DecisionRecorded: 'decision.recorded',
+  InboxItemCreated: 'inbox.item.created',
+  ItemAutoAccepted: 'item.auto_accepted',
+  EnrichCompleted: 'enrich.completed',
 } as const;
 
 export type KnownEventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];

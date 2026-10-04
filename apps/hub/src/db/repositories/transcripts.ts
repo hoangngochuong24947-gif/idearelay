@@ -127,6 +127,16 @@ export function getCurrentRevision(
   return row ?? null;
 }
 
+export function getRevision(
+  sqlite: SqliteDb,
+  id: string,
+): TranscriptRevisionRow | null {
+  const row = sqlite
+    .prepare('SELECT * FROM transcript_revisions WHERE id = ?')
+    .get(id) as TranscriptRevisionRow | undefined;
+  return row ?? null;
+}
+
 export function listSegments(sqlite: SqliteDb, revisionId: string): SegmentRow[] {
   return sqlite
     .prepare('SELECT * FROM segments WHERE revision_id = ? ORDER BY idx ASC')

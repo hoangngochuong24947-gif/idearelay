@@ -120,6 +120,17 @@ export type InboxKind =
   | 'question'
   | 'unknown';
 
+/** Canonical, ordered list of the 7 top-level kinds (spec §9). */
+export const INBOX_KINDS: readonly InboxKind[] = [
+  'requirement',
+  'idea',
+  'log',
+  'task',
+  'reference',
+  'question',
+  'unknown',
+];
+
 export type InboxStatus = 'pending' | 'accepted' | 'rejected' | 'rerouted';
 
 export interface InboxItem {
