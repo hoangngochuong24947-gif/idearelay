@@ -1,0 +1,12 @@
+# runtime data —— SQLite 真相库与文件投影（见 ADR-0002）
+/data/
+
+# deps
+node_modules/
+
+# env / 凭证（永不入库，见 ADR-0009）
+.env
+.env.*
+
+# macOS
+.DS_Store

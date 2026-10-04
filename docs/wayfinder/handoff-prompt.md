@@ -13,6 +13,7 @@
 7. `prdfraft.md` — 原始需求草稿（中文）
 8. `docs/research/stack-survey.md` — 每个模块的开源选型调研（可以抄什么、明确不用什么、哪两处没有开源先例）
 9. 本文件第 4、5 节 — 本轮 grilling 的结论与已查实事实，**不要再重新讨论**
+10. `docs/spec/mvp-implementation.md` — **MVP 实现 spec（快进产出）**。它把地图上未决的 ticket 用推荐答案定死；**要开始写代码就以它为准**，地图的决策 ticket 不再逐张解。
 
 ## 0b. 本机已装好的 iOS 工具（直接用，别重装）
 
