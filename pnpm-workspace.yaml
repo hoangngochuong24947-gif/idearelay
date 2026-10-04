@@ -5,4 +5,6 @@ packages:
 # Native addon must build its binding; pnpm blocks dependency build scripts by
 # default. See https://pnpm.io/settings
 allowBuilds:
+  '@google/genai': false
   better-sqlite3: true
+  protobufjs: false

@@ -54,6 +54,13 @@ export const EVENT_TYPES = {
   // M3 (需求拆分与溯源): split + hybrid anchors + realignment (spec §10, ADR-0004).
   RequirementCreated: 'requirement.created',
   RequirementRealigned: 'requirement.realigned',
+  // M5 (工作流 run): spec §8 / §11 — run lifecycle + observable stages.
+  RunStarted: 'run.started',
+  StageStarted: 'stage.started',
+  StageFinished: 'stage.finished',
+  RunFinished: 'run.finished',
+  RunFailed: 'run.failed',
+  RunRolledBack: 'run.rolled_back',
 } as const;
 
 export type KnownEventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];

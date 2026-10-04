@@ -7,10 +7,14 @@ import { loadConfig, type HubConfig } from './config/config.js';
 import { registerProviders } from './config/registry.js';
 import { listTables, openDatabase, type Db } from './db/index.js';
 import { upsertProviders } from './db/repositories/providers.js';
+import { DryRunExecutorProvider } from './workflows/executor-dry-run.js';
+import { seedWorkflowSpecs } from './workflows/seed.js';
+import { WorkflowRunner } from './workflows/runner.js';
 import { startHttp, type HttpHandle } from './http/server.js';
 import { asrRegistration, createAsrProvider } from './providers/asr/index.js';
 import { createDecisionProvider, decisionRegistration } from './providers/decision/index.js';
 import { createModelProvider, modelRegistration, MOCK_MODEL_ID } from './providers/model/index.js';
+import { createRagProvider, ragProviderRegistration } from './providers/rag/index.js';
 import { JobQueue } from './queue/job-queue.js';
 import { createIntake } from './watcher/intake.js';
 import { startWatcher, type WatcherHandle } from './watcher/watcher.js';
@@ -19,6 +23,7 @@ import { registerEnrichHandler } from './worker/handlers/enrich.js';
 import { registerRealignHandler } from './worker/handlers/realign.js';
 import { registerSplitHandler } from './worker/handlers/split.js';
 import { registerTranscribeHandler } from './worker/handlers/transcribe.js';
+import { registerWorkflowRunHandler } from './worker/handlers/workflow-run.js';
 import { Worker } from './worker/worker.js';
 
 export interface Hub {
@@ -29,6 +34,8 @@ export interface Hub {
   worker: Worker;
   watcher: WatcherHandle;
   http: HttpHandle;
+  /** The M5 WorkflowRun engine (spec §8). */
+  runner: WorkflowRunner;
   stop(): Promise<void>;
 }
 
@@ -91,10 +98,22 @@ export async function bootstrap(
       ? { kind: 'env', name: 'TYPESAFE_API_KEY' }
       : { kind: 'none' };
 
+  // Executor (§7.7 / ADR-0006): MVP ships only the dry-run implementation.
+  const executor = new DryRunExecutorProvider({ log });
+  const executorRegistration: ProviderRegistration = {
+    id: executor.id,
+    kind: 'executor',
+    name: 'Dry-run executor (file handoff, no code execution)',
+    credentialSource: { kind: 'none' },
+    capabilities: executor.capabilities,
+    enabled: true,
+  };
+
   const registrations: ProviderRegistration[] = [
     asrRegistration(asr, asrCredential),
     modelRegistration(model, modelCredential),
     decisionRegistration(decision, decisionCredential),
+    executorRegistration,
     ...config.providers,
   ];
   const registry = registerProviders(registrations);
@@ -106,8 +125,24 @@ export async function bootstrap(
   const db = openDatabase(config.dbPath);
   log(`db: migrated ${config.dbPath} (${listTables(db.sqlite).length} tables)`);
 
+  // RagProvider (§7.6): sqlite-vec + FTS5 + sqlite-lembed, created after the db
+  // file exists (it opens its own dedicated connection). Degrades to BM25-only
+  // when the local .gguf model is missing/unloadable.
+  const rag = createRagProvider({ dbPath: config.dbPath });
+  const ragRegistration = ragProviderRegistration(rag);
+  registrations.push(ragRegistration);
+  registry.register(ragRegistration);
+  log(
+    `rag: ${rag.id} hybrid=${rag.capabilities.hybrid} embedding=${rag.capabilities.embeddingModel ?? 'none (BM25-only)'}`,
+  );
+
   const seeded = upsertProviders(db.sqlite, registrations);
   if (seeded > 0) log(`providers: persisted ${seeded} rows`);
+
+  // WorkflowSpec seed (§8.1) — idempotent.
+  if (seedWorkflowSpecs(db.sqlite)) {
+    log('workflows: seeded requirement-research spec');
+  }
 
   // 3. Worker loop with the transcribe → enrich handlers.
   const queue = new JobQueue(db.sqlite, config.worker.maxAttempts);
@@ -150,6 +185,36 @@ export async function bootstrap(
     dataDir: config.dataDir,
     log,
   });
+
+  // 3b. WorkflowRun engine (M5, spec §8): gate scan → run jobs → Pi stages.
+  const runner = new WorkflowRunner(
+    {
+      sqlite: db.sqlite,
+      dataDir: config.dataDir,
+      registry,
+      executor,
+      ragProvider: rag,
+      heartbeatMs: config.workflow.heartbeatMs,
+      log,
+    },
+    { staleRunMs: config.workflow.staleRunMs },
+  );
+  registerWorkflowRunHandler(worker, runner);
+  const recovered = await runner.recoverStaleRuns(config.workflow.staleRunMs);
+  if (recovered.length > 0) log(`workflows: recovered ${recovered.length} stale run(s)`);
+  const triggerTimer = setInterval(() => {
+    try {
+      runner.startPendingRequirementRuns();
+    } catch (error) {
+      log(`workflows: gate scan failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }, config.workflow.triggerIntervalMs);
+  triggerTimer.unref();
+  runner.startPendingRequirementRuns();
+  log(
+    `workflows: run engine started (trigger=${config.workflow.triggerIntervalMs}ms heartbeat=${config.workflow.heartbeatMs}ms stale=${config.workflow.staleRunMs}ms)`,
+  );
+
   worker.start();
   log('worker: loop started (handlers: echo, transcribe, enrich, split, realign)');
 
@@ -168,13 +233,15 @@ export async function bootstrap(
     log,
   });
 
-  // 5. HTTP, including the mobile-facing tus upload endpoint (spec §11).
+  // 5. HTTP, including the mobile-facing tus upload endpoint and the M5
+  //    run-observation routes (spec §11).
   const http = await startHttp({
     ...config.http,
     tus: {
       tusDir: config.tusDir,
       inboxDir: config.inboxDir,
     },
+    db: db.sqlite,
     log,
   });
 
@@ -188,7 +255,9 @@ export async function bootstrap(
     worker,
     watcher,
     http,
+    runner,
     async stop(): Promise<void> {
+      clearInterval(triggerTimer);
       await worker.stop();
       await watcher.stop();
       await http.close();

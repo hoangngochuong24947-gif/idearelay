@@ -12,12 +12,15 @@
     "dev": "node dist/index.js"
   },
   "dependencies": {
+    "@earendil-works/pi-agent-core": "0.80.7",
     "@idearelay/contracts": "workspace:*",
     "@tus/file-store": "2.1.1",
     "@tus/server": "2.4.5",
     "better-sqlite3": "13.0.3",
     "chokidar": "5.0.0",
-    "drizzle-orm": "0.45.3"
+    "drizzle-orm": "0.45.3",
+    "sqlite-lembed": "0.0.1-alpha.8",
+    "sqlite-vec": "0.1.9"
   },
   "devDependencies": {
     "@types/better-sqlite3": "9.6.0",

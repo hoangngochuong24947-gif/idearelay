@@ -67,6 +67,15 @@ export interface HubConfig {
   decision: DecisionConfig;
   /** Gate thresholds (§9) — per-call overrides still win at the call site. */
   gate: DecisionThresholds;
+  /** WorkflowRun engine settings (§6 / §8 / §11, M5). */
+  workflow: {
+    /** Interval for the gate-eligibility scan that enqueues run jobs. */
+    triggerIntervalMs: number;
+    /** Stage heartbeat cadence (written into run_stages.detail_json). */
+    heartbeatMs: number;
+    /** §6: a `running` run with no heartbeat for this long is considered dead. */
+    staleRunMs: number;
+  };
   providers: ProviderRegistration[];
 }
 
@@ -194,6 +203,11 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): HubConfig {
       high: floatFromEnv(env.IDEA_RELAY_GATE_HIGH, DEFAULT_DECISION_THRESHOLDS.high),
       low: floatFromEnv(env.IDEA_RELAY_GATE_LOW, DEFAULT_DECISION_THRESHOLDS.low),
       noulBand: noulBandFromEnv(env.IDEA_RELAY_NOUL_BAND),
+    },
+    workflow: {
+      triggerIntervalMs: intFromEnv(env.IDEA_RELAY_RUN_TRIGGER_INTERVAL_MS, 2_000),
+      heartbeatMs: intFromEnv(env.IDEA_RELAY_RUN_HEARTBEAT_MS, 5_000),
+      staleRunMs: intFromEnv(env.IDEA_RELAY_RUN_STALE_MS, 120_000),
     },
     providers: [],
   };

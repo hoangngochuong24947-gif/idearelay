@@ -94,6 +94,17 @@ export function listRequirements(sqlite: SqliteDb): RequirementRow[] {
     .all() as RequirementRow[];
 }
 
+/** Move a Requirement through draft → open → running → done (§5.2). */
+export function updateRequirementStatus(
+  sqlite: SqliteDb,
+  id: string,
+  status: RequirementStatus,
+): void {
+  sqlite
+    .prepare('UPDATE requirements SET status = ? WHERE id = ?')
+    .run(status, id);
+}
+
 /** Requirements generated from a given transcript revision (split idempotency). */
 export function listRequirementsBySourceRevision(
   sqlite: SqliteDb,
