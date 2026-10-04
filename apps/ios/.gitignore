@@ -1,0 +1,8 @@
+# Xcode user state
+IdeaRelay.xcodeproj/xcuserdata/
+IdeaRelay.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcuserstate
+
+# Local build output
+build/
+DerivedData/
