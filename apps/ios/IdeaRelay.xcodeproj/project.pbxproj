@@ -7,9 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		092F0BF7F9990924FCDB0C15 /* InboxModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1F10625D7E0F9CC95B86DA /* InboxModels.swift */; };
+		14CCEA863989EC7EF73C6B88 /* InboxItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB86752C4A7D1E43B44FFEB /* InboxItemDetailView.swift */; };
 		21C3A1B209D236C555F62C19 /* TUSKit in Frameworks */ = {isa = PBXBuildFile; productRef = FE0B404611F569DC474BC5CA /* TUSKit */; };
+		2384CE29202E6A09A3FA407F /* InboxStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650620E6D858E77DFED16545 /* InboxStore.swift */; };
+		31275F90FFAB2BF7CE011F5F /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59851CB36297E08D657F995 /* RootView.swift */; };
 		7661A52512CB0C1C15354C90 /* RecorderController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A924A574AAE1B4FA0DF60B4 /* RecorderController.swift */; };
 		8B8EDA40FAAC999E5B4277F3 /* HubSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BDD717CA492EAB70A8314C /* HubSettings.swift */; };
+		93182DA9B2FB9C7C5ECD03DA /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F14DE5B63585857382D7DA3 /* InboxView.swift */; };
+		AE19D00841CE60F86401277F /* InboxAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264F52BE622646C6D3B04EC /* InboxAPI.swift */; };
 		D0BAF97ED1221056E3B811B3 /* RecordingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAC6AEB7DF8A72C8239A2E1 /* RecordingSession.swift */; };
 		DDA2813C7F333D3B6DDCA8A2 /* UploadCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B9A073FD277B3467457BC2 /* UploadCoordinator.swift */; };
 		F0ECB7ACC99E1EECF5583E6F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F644E48ED6EE40AEBF89BBA /* ContentView.swift */; };
@@ -20,10 +26,16 @@
 		041F22DD8C122B9FD61F95EF /* IdeaRelayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdeaRelayApp.swift; sourceTree = "<group>"; };
 		3AAC6AEB7DF8A72C8239A2E1 /* RecordingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingSession.swift; sourceTree = "<group>"; };
 		51B9A073FD277B3467457BC2 /* UploadCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadCoordinator.swift; sourceTree = "<group>"; };
+		5264F52BE622646C6D3B04EC /* InboxAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxAPI.swift; sourceTree = "<group>"; };
+		5F14DE5B63585857382D7DA3 /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
+		650620E6D858E77DFED16545 /* InboxStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxStore.swift; sourceTree = "<group>"; };
 		7F644E48ED6EE40AEBF89BBA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8A924A574AAE1B4FA0DF60B4 /* RecorderController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderController.swift; sourceTree = "<group>"; };
 		A25B8B3B746066F6631FC939 /* IdeaRelay.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = IdeaRelay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BFB86752C4A7D1E43B44FFEB /* InboxItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxItemDetailView.swift; sourceTree = "<group>"; };
+		CA1F10625D7E0F9CC95B86DA /* InboxModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxModels.swift; sourceTree = "<group>"; };
 		D4BDD717CA492EAB70A8314C /* HubSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubSettings.swift; sourceTree = "<group>"; };
+		F59851CB36297E08D657F995 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,10 +90,24 @@
 			path = Store;
 			sourceTree = "<group>";
 		};
+		86AE6DB5794D81BC127968A9 /* Inbox */ = {
+			isa = PBXGroup;
+			children = (
+				5264F52BE622646C6D3B04EC /* InboxAPI.swift */,
+				BFB86752C4A7D1E43B44FFEB /* InboxItemDetailView.swift */,
+				CA1F10625D7E0F9CC95B86DA /* InboxModels.swift */,
+				650620E6D858E77DFED16545 /* InboxStore.swift */,
+				5F14DE5B63585857382D7DA3 /* InboxView.swift */,
+				F59851CB36297E08D657F995 /* RootView.swift */,
+			);
+			path = Inbox;
+			sourceTree = "<group>";
+		};
 		9F22B0B2B80FE256487E7B67 /* IdeaRelay */ = {
 			isa = PBXGroup;
 			children = (
 				6BC19078FF1CB55B5BCCF321 /* App */,
+				86AE6DB5794D81BC127968A9 /* Inbox */,
 				55DC6F9A3750FDE0A9B59CA9 /* Networking */,
 				B359BFAD21E12034B9A175A2 /* Recorder */,
 				6D5E1C861D890C55A92071A5 /* Store */,
@@ -182,8 +208,14 @@
 				F0ECB7ACC99E1EECF5583E6F /* ContentView.swift in Sources */,
 				8B8EDA40FAAC999E5B4277F3 /* HubSettings.swift in Sources */,
 				F0F956001813CD79E9960F56 /* IdeaRelayApp.swift in Sources */,
+				AE19D00841CE60F86401277F /* InboxAPI.swift in Sources */,
+				14CCEA863989EC7EF73C6B88 /* InboxItemDetailView.swift in Sources */,
+				092F0BF7F9990924FCDB0C15 /* InboxModels.swift in Sources */,
+				2384CE29202E6A09A3FA407F /* InboxStore.swift in Sources */,
+				93182DA9B2FB9C7C5ECD03DA /* InboxView.swift in Sources */,
 				7661A52512CB0C1C15354C90 /* RecorderController.swift in Sources */,
 				D0BAF97ED1221056E3B811B3 /* RecordingSession.swift in Sources */,
+				31275F90FFAB2BF7CE011F5F /* RootView.swift in Sources */,
 				DDA2813C7F333D3B6DDCA8A2 /* UploadCoordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

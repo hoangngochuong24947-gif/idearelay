@@ -5,8 +5,8 @@ import SwiftUI
 struct IdeaRelayApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
-        .modelContainer(for: RecordingSession.self)
+        .modelContainer(for: [RecordingSession.self, InboxItemRecord.self, InboxSyncState.self])
     }
 }
