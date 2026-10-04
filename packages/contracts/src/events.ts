@@ -42,6 +42,8 @@ export interface EventRecord {
 
 /** Canonical event type constants. */
 export const EVENT_TYPES = {
+  RecordingReceived: 'recording.received',
+  TranscriptRevisionCreated: 'transcript.revision.created',
   ProjectionWritten: 'projection.written',
   FileManuallyEdited: 'file.manually_edited',
 } as const;

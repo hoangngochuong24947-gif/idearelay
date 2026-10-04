@@ -14,6 +14,7 @@
   "dependencies": {
     "@idearelay/contracts": "workspace:*",
     "better-sqlite3": "13.0.3",
+    "chokidar": "5.0.0",
     "drizzle-orm": "0.45.3"
   },
   "devDependencies": {
