@@ -16,6 +16,8 @@ import { createIntake } from './watcher/intake.js';
 import { startWatcher, type WatcherHandle } from './watcher/watcher.js';
 import { registerEchoHandler } from './worker/handlers/echo.js';
 import { registerEnrichHandler } from './worker/handlers/enrich.js';
+import { registerRealignHandler } from './worker/handlers/realign.js';
+import { registerSplitHandler } from './worker/handlers/split.js';
 import { registerTranscribeHandler } from './worker/handlers/transcribe.js';
 import { Worker } from './worker/worker.js';
 
@@ -133,10 +135,23 @@ export async function bootstrap(
     decision,
     modelName: config.model.model ?? MOCK_MODEL_ID,
     thresholds: config.gate,
+    queue,
+    log,
+  });
+  registerSplitHandler(worker, {
+    sqlite: db.sqlite,
+    dataDir: config.dataDir,
+    model,
+    modelName: config.model.model ?? MOCK_MODEL_ID,
+    log,
+  });
+  registerRealignHandler(worker, {
+    sqlite: db.sqlite,
+    dataDir: config.dataDir,
     log,
   });
   worker.start();
-  log('worker: loop started (handlers: echo, transcribe, enrich)');
+  log('worker: loop started (handlers: echo, transcribe, enrich, split, realign)');
 
   // 4. Consume-folder watcher → intake.
   const intake = createIntake({

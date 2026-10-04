@@ -51,6 +51,9 @@ export const EVENT_TYPES = {
   InboxItemCreated: 'inbox.item.created',
   ItemAutoAccepted: 'item.auto_accepted',
   EnrichCompleted: 'enrich.completed',
+  // M3 (需求拆分与溯源): split + hybrid anchors + realignment (spec §10, ADR-0004).
+  RequirementCreated: 'requirement.created',
+  RequirementRealigned: 'requirement.realigned',
 } as const;
 
 export type KnownEventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];

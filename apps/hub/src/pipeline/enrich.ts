@@ -17,6 +17,8 @@ import { insertInboxItem } from '../db/repositories/inbox.js';
 import * as transcripts from '../db/repositories/transcripts.js';
 import { writeInboxItemProjection } from '../projections/inbox.js';
 import { writeSummaryProjection } from '../projections/summary.js';
+import type { JobQueue } from '../queue/job-queue.js';
+import { splitIdempotencyKey } from '../worker/handlers/split.js';
 
 // Declarative instructions (no trailing `？`) so a classifier never scores the
 // instruction itself as content.
@@ -56,6 +58,11 @@ export interface EnrichDeps {
   thresholdOverrides?: DecisionRequest['thresholdOverrides'];
   kindOptions?: readonly string[];
   tagOptions?: readonly string[];
+  /**
+   * When present, content the gate auto-advances as `requirement` enqueues an
+   * idempotent `split` job (M3, spec §13 step 6).
+   */
+  queue?: JobQueue;
   now?: () => number;
   log?: (message: string) => void;
 }
@@ -288,6 +295,15 @@ export async function enrichRecording(
     });
   });
   writeOnce();
+
+  // M3: auto-advanced requirement content continues into the split stage.
+  if (autoAdvance && kind === 'requirement' && deps.queue !== undefined) {
+    deps.queue.enqueue({
+      kind: 'split',
+      payload: { recordingId, revisionId: revision.id },
+      idempotencyKey: splitIdempotencyKey(recordingId, revision.id),
+    });
+  }
 
   // 6. Deterministic file projections (write-only; ADR-0002).
   const summaryProjection = writeSummaryProjection({

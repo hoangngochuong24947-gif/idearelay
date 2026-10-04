@@ -5,6 +5,7 @@ import {
   type TranscribeDeps,
 } from '../../pipeline/transcribe.js';
 import { enrichIdempotencyKey } from './enrich.js';
+import { realignIdempotencyKey } from './realign.js';
 
 /** Payload of a `transcribe` job enqueued by the consume-folder intake. */
 export interface TranscribeJobPayload {
@@ -12,15 +13,16 @@ export interface TranscribeJobPayload {
 }
 
 export interface TranscribeHandlerDeps extends TranscribeDeps {
-  /** When present, a Final transcript enqueues an idempotent `enrich` job. */
+  /** When present, a Final transcript enqueues idempotent `enrich` + `realign` jobs. */
   queue?: JobQueue;
 }
 
 /**
  * Register the `transcribe` worker handler. It runs the M1 pipeline purely
  * against the injected `AsrProvider` interface, then (M2) enqueues the `enrich`
- * stage so summarization + classification follow every Final transcript
- * (spec §13 steps 5–6).
+ * stage so summarization + classification follow every Final transcript, and
+ * (M3) a `realign` job so existing Requirements re-align to the newer Final
+ * revision by time overlap (spec §13 steps 5–6, §10).
  */
 export function registerTranscribeHandler(
   worker: Worker,
@@ -40,6 +42,14 @@ export function registerTranscribeHandler(
         revisionId: outcome.finalRevisionId,
       },
       idempotencyKey: enrichIdempotencyKey(outcome.recordingId, outcome.finalRevisionId),
+    });
+    deps.queue?.enqueue({
+      kind: 'realign',
+      payload: {
+        recordingId: outcome.recordingId,
+        revisionId: outcome.finalRevisionId,
+      },
+      idempotencyKey: realignIdempotencyKey(outcome.recordingId, outcome.finalRevisionId),
     });
 
     return outcome;

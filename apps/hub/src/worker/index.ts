@@ -11,3 +11,13 @@ export {
   enrichIdempotencyKey,
   type EnrichJobPayload,
 } from './handlers/enrich.js';
+export {
+  registerSplitHandler,
+  splitIdempotencyKey,
+  type SplitJobPayload,
+} from './handlers/split.js';
+export {
+  registerRealignHandler,
+  realignIdempotencyKey,
+  type RealignJobPayload,
+} from './handlers/realign.js';
